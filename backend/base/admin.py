@@ -1,10 +1,10 @@
-import imp
 from django.contrib import admin
-from .models import Product, Review,ShippingAddress,OrderItem,Order
-# Register your models here.
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from base import models
 
-admin.site.register(Product)
-admin.site.register(Review)
-admin.site.register(ShippingAddress)
-admin.site.register(Order)
-admin.site.register(OrderItem)
+admin.site.register(models.Product)
+admin.site.register(models.Review)
+admin.site.register(models.ShippingAddress)
+admin.site.register(models.Order)
+admin.site.register(models.OrderItem)
+admin.site.register(models.UserProfile)
