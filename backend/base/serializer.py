@@ -1,4 +1,5 @@
 from dataclasses import field
+from os import access
 from pyexpat import model
 from queue import Empty
 from rest_framework import serializers
@@ -18,7 +19,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-        serializers = UserSerializerWithToken(user).data
+        serializers = UserSerializer(user).data
         for k,v in serializers.items():
             token[k] = v
 
@@ -38,12 +39,17 @@ class UserSerializer(serializers.ModelSerializer):
 
         return name
 
-class UserSerializerWithToken(UserSerializer):
-    token = serializers.SerializerMethodField(read_only=True)
-    class Meta: 
-        model = models.UserProfile
-        fields = ['id','email','name', 'is_staff', 'token']
+# class UserSerializerWithToken(UserSerializer):
+#     # refresh = serializers.SerializerMethodField(read_only=True)
+#     # access = serializers.SerializerMethodField(read_only=True)
+#     class Meta: 
+#         model = models.UserProfile
+#         fields = ['id','email','name', 'is_staff']
 
-    def get_token(self, obj):
-        token = RefreshToken.for_user(obj)
-        return str(token)
+#     def get_refresh(self, obj):
+#         refresh = RefreshToken.for_user(obj)
+#         return str(refresh)
+    
+#     def get_access(self, obj):
+#         access = RefreshToken.for_user(obj).access_token
+#         return str(access)
