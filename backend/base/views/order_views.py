@@ -9,6 +9,7 @@ from base.models import OrderItem, Product, Order, ShippingAddress
 from base.serializer import UserSerializer, MyTokenObtainPairSerializer, OrderSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def addOrderItem(request):
@@ -73,9 +74,30 @@ def addOrderItem(request):
 
     if order.totalPrice < 100:
         order.shippingPrice += 10
-        order.totalPrice += order.shippingPrice 
+        order.totalPrice += order.shippingPrice
 
     order.save()
 
     serializer = OrderSerializer(order, many=False)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getOrderById(request, pk):
+    user = request.user
+
+    try:
+        order = Order.objects.get(id=pk)
+
+        if user.is_staff or order.user == user:
+            serializer = OrderSerializer(order, many=False)
+            return Response(serializer.data)
+
+        else:
+            Response({'detail': 'Not authorized to view this order'},
+                     status=status.HTTP_400_BAD_REQUEST)
+
+    except:
+        return Response({'detail': 'Order does not exist'},
+                        status=status.HTTP_400_BAD_REQUEST)
