@@ -65,3 +65,4 @@ def updateUserProfile(request):
     user.save()
 
     return Response(serializer.data)
+

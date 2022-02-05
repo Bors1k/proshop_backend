@@ -87,7 +87,7 @@ class UserSerializerWithToken(UserSerializer):
 
     class Meta:
         model = models.UserProfile
-        fields = ['email', 'access', 'refresh']
+        fields = ['email', 'access', 'refresh', 'is_staff']
 
     def get_refresh(self, obj):
         refresh = RefreshToken.for_user(obj)
