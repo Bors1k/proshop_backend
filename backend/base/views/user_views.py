@@ -21,13 +21,45 @@ def getUsers(request):
 
     return Response(serializer.data)
 
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def getUserById(request, pk):
+    user = UserProfile.objects.get(id=pk)
+    serializer = UserSerializer(user, many=False)
+
+    return Response(serializer.data)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def updateUserById(request, pk):
+    user = UserProfile.objects.get(id=pk)
+    serializer = UserSerializer(user, many=False)
+
+    data = request.data
+
+    user.first_name = data['name']
+    user.name = data['name']
+    user.email = data['email']
+
+    user.is_staff = data['is_staff']
+
+    # if data['password'] != '':
+    #     user.password = make_password(data['password'])
+
+    user.save()
+
+    return Response(serializer.data)
+
+
 @api_view(['DELETE'])
 @permission_classes([IsAdminUser])
 def deleteUser(request, pk):
     delUser = UserProfile.objects.get(id=pk)
     delUser.delete()
-    
+
     return Response('User was deleted')
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -72,4 +104,3 @@ def updateUserProfile(request):
     user.save()
 
     return Response(serializer.data)
-
