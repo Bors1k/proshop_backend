@@ -21,6 +21,13 @@ def getUsers(request):
 
     return Response(serializer.data)
 
+@api_view(['DELETE'])
+@permission_classes([IsAdminUser])
+def deleteUser(request, pk):
+    delUser = UserProfile.objects.get(id=pk)
+    delUser.delete()
+    
+    return Response('User was deleted')
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
