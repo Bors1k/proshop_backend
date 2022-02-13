@@ -4,14 +4,27 @@ from pyexpat import model
 from queue import Empty
 from rest_framework import serializers
 from base import models
-from .models import Product, Order, ShippingAddress, OrderItem
+from .models import Product, Order, Review, ShippingAddress, OrderItem
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    reviews = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Product
+        fields = '__all__'
+
+    def get_reviews(self, obj):
+        reviews = obj.review_set.all()
+        serializers = ReviewSerializer(reviews, many=True)
+
+        return serializers.data
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
         fields = '__all__'
 
 
